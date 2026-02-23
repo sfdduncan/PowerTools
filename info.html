@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Info - Digital Space-Time Colonialism Index</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			color-scheme: dark;
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		html, body {
+			scrollbar-width: none;
+			-ms-overflow-style: none;
+		}
+
+		html::-webkit-scrollbar,
+		body::-webkit-scrollbar {
+			display: none;
+		}
+
+		body {
+			background: #000;
+			color: #fff;
+			font-family: "IBM Plex Mono", monospace;
+			min-height: 100vh;
+			position: relative;
+		}
+
+		.star-field {
+			position: fixed;
+			inset: 0;
+			pointer-events: none;
+			z-index: 0;
+			overflow: hidden;
+		}
+
+		.star {
+			position: absolute;
+			color: #fff;
+			line-height: 1;
+			user-select: none;
+			animation-name: star-twinkle;
+			animation-timing-function: steps(1, end);
+			animation-iteration-count: infinite;
+		}
+
+		@keyframes star-twinkle {
+			0%, 100% {
+				opacity: 1;
+			}
+
+			50% {
+				opacity: 0;
+			}
+		}
+
+		nav,
+		main {
+			position: relative;
+			z-index: 1;
+		}
+
+		.top-nav {
+			width: 100%;
+			padding: 2rem 2rem;
+			display: flex;
+			justify-content: space-between;
+			align-items: start;
+			gap: 2rem;
+			position: relative;
+		}
+
+		.top-nav::after {
+			content: "";
+			position: absolute;
+			left: 2rem;
+			right: 2rem;
+			bottom: 0;
+			border-bottom: 0.5px solid #fff;
+		}
+
+		.brand {
+			font-size: 0.95rem;
+			letter-spacing: 0.04em;
+			white-space: nowrap;
+		}
+
+		.brand a {
+			color: #fff;
+			text-decoration: none;
+		}
+
+		.brand a:hover,
+		.brand a:focus-visible {
+			text-decoration: underline;
+			text-underline-offset: 0.15em;
+		}
+
+		.nav-long-text {
+			justify-self: end;
+			margin-right: 6rem;
+			max-width: 70ch;
+			text-align: left;
+			font-size: .9rem;
+			line-height: 1.2;
+			font-weight: 400;
+		}
+
+		.info-link {
+			color: #fff;
+			text-decoration: underline;
+			text-underline-offset: 0.15em;
+			font-size: 0.95rem;
+			letter-spacing: 0.05em;
+			white-space: nowrap;
+		}
+
+		main {
+			padding: 2rem 2rem;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+
+		.about-section {
+			margin-bottom: 3rem;
+		}
+
+		.about-section h1 {
+			font-size: 1.1rem;
+			font-weight: 500;
+			letter-spacing: 0.04em;
+			margin-bottom: 1.5rem;
+		}
+
+		.about-section p {
+			font-size: 0.9rem;
+			line-height: 1.6;
+			max-width: 90ch;
+		}
+
+		.archive-section h2 {
+			font-size: 1rem;
+			font-weight: 500;
+			letter-spacing: 0.04em;
+			margin-bottom: 1.5rem;
+		}
+
+		.archive-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1.5rem;
+		}
+
+		.archive-item {
+			aspect-ratio: 1 / 1;
+			border: 0.5px solid #fff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 1.5rem;
+			text-align: center;
+			text-decoration: none;
+			color: #fff;
+			font-size: 0.85rem;
+			line-height: 1.4;
+			letter-spacing: 0.02em;
+			transition: background 0.2s ease;
+			word-wrap: break-word;
+			overflow-wrap: break-word;
+			hyphens: auto;
+			overflow: hidden;
+			min-width: 0;
+		}
+
+		.archive-item span {
+			max-width: 100%;
+			word-wrap: break-word;
+			overflow-wrap: break-word;
+		}
+
+		.archive-item:hover,
+		.archive-item:focus-visible {
+			background: rgba(255, 255, 255, 0.05);
+		}
+
+		@media (max-width: 900px) {
+			.top-nav {
+				grid-template-columns: 1fr;
+				gap: 0.85rem;
+			}
+
+			.nav-long-text {
+				justify-self: stretch;
+				margin-right: 0;
+				max-width: 100%;
+				text-align: left;
+			}
+
+			.info-link {
+				justify-self: start;
+			}
+
+			.archive-grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+
+		@media (max-width: 600px) {
+			.archive-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="star-field" id="starField" aria-hidden="true"></div>
+	<nav class="top-nav">
+		<div class="brand"><a href="index.html">Digital Space-Time Colonialism Index</a></div>
+		<span class="info-link">Info</span>
+	</nav>
+	<main>
+		<section class="about-section">
+			<h1>About</h1>
+			<p>
+            This project adapts Juliana Hu Pegues' work <i>Space-Time Colonialism: Alaska's Indigenous and Asian Entanglements</i> to examine the current digital crisis, in which labor from the Global South is exploited to fuel the development of data centers built on Indigenous lands.<br><br>
+
+            Central to Hu Pegues' scholarship is the concept of "space-time colonialism," through which she reveals the entangled living and working conditions of Asian migrants and Indigenous Alaskans across towns and villages in southern Alaska. Her historical account directly challenges two strands of U.S. imperial propaganda: the notion that Asian migrants were perpetually in transit, never truly remaining in Alaska, and the idea that Indigenous Alaskans were frozen in time, cast as unable to modernize or participate in the U.S. economy. These constructions, she argues, are co-constitutive: positioning Indigenous peoples as the antithesis of modernity and Asian immigrants as permanent outsiders together served to naturalize white settlers as the legitimate historical subjects of Alaska, while justifying the exclusion of migrant laborers and the dispossession of Native peoples. <br><br>
+
+            As both the U.S. empire and the empires of big tech have expanded, labor exploitation and the seizure of Indigenous land have gone global and into the cloud. This shift has removed the conditions that once produced visible, localized entanglements like those Hu Pegues documents in Alaska. What we see today, as a result, is a dissipation of apparent, unified racialized/colonized struggle and consciousness. <br><br>
+
+            This project works against that dissipation. By building an archive that draws parallels between the migrant and Indigenous labor exploitation of the past and its present-day digital equivalents, it aims to elucidate a growing global movement resisting the excesses of big tech and to make legible the continuities that geographic and technological dispersal have obscured. Crucially, the archive seeks to show that the communities most burdened by the digital economy are once again entangled: workers in the Global South, whose labor sustains the infrastructures of AI and cloud computing, and Indigenous communities whose lands are seized for data centers and whose territories are mined for the minerals that make these technologies possible. Just as Hu Pegues revealed the co-constitutive exploitation of migrants and Alaska Natives under U.S. settler colonialism, this archive insists that these two groups are not peripheral to the story of big tech but central to it, and that their fates remain bound together.	<br><br>
+            
+            <b>TL;DR: AI colonialism, Human Digital labor exploitation, Indigenous land dispossession, protest, resistance, planetary solidarity</b>
+            </p>
+		</section>
+		<section class="archive-section">
+			<h2>Essential Readings</h2>
+			<div class="archive-grid">
+				<a class="archive-item" href="#">
+					<span>Space-Time Colonialism: Alaska's Indigenous and Asian Entanglements<br><br><em>Juliana Hu Pegues</em></span>
+				</a>
+				<a class="archive-item" href="#">
+					<span>Feeding the Machine: The Hidden Human Labor Powering A.I.<br><br><em>James Muldoon, Mark Graham, & Callum Grant</em></span>
+				</a>
+				<a class="archive-item" href="#">
+					<span>Waiting for Robots: The Hired Hands of Automation<br><br><em>Antonio Casilli</em></span>
+				</a>
+				<a class="archive-item" href="#">
+					<span>Digital Colonialism: Toward a Hacker-Fanonian Critique<br><br><em>Deivison Faustino & Walter Lippold</em></span>
+				</a>
+				<a class="archive-item" href="#">
+					<span>Race After Technology<br><br><em>Ruha Benjamin</em></span>
+				</a>
+				<a class="archive-item" href="#">
+					<span>Red Scare: The State's Indigenous Terrorist<br><br><em>Joanne Barker</em></span>
+				</a>
+			</div>
+		</section>
+	</main>
+	<script>
+		const starField = document.getElementById("starField");
+		const topNav = document.querySelector(".top-nav");
+
+		function renderStars() {
+			starField.replaceChildren();
+			const navHeight = topNav ? topNav.getBoundingClientRect().height : 0;
+			const availableHeight = Math.max(0, window.innerHeight - navHeight);
+			starField.style.top = `${navHeight}px`;
+			const count = Math.max(40, Math.floor((window.innerWidth * availableHeight) / 22000));
+
+			for (let i = 0; i < count; i += 1) {
+				const star = document.createElement("span");
+				star.className = "star";
+				star.textContent = Math.random() < 0.22 ? "o" : "*";
+				star.style.left = `${Math.random() * 100}%`;
+				star.style.top = `${Math.random() * 100}%`;
+				star.style.fontSize = `${10 + Math.floor(Math.random() * 8)}px`;
+				star.style.animationDuration = `${1.2 + Math.random() * 1.1}s`;
+				star.style.animationDelay = `${Math.random() * 0.6}s`;
+				starField.append(star);
+			}
+		}
+
+		renderStars();
+		window.addEventListener("resize", renderStars);
+	</script>
+</body>
+</html>

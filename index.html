@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Space-Time Colonialism Index</title>
+	<link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			color-scheme: dark;
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background: #000;
+			color: #fff;
+			font-family: "IBM Plex Mono", monospace;
+			min-height: 100vh;
+			position: relative;
+		}
+
+		.star-field {
+			position: fixed;
+			inset: 0;
+			pointer-events: none;
+			z-index: 0;
+			overflow: hidden;
+		}
+
+		.star {
+			position: absolute;
+			color: #fff;
+			line-height: 1;
+			user-select: none;
+			animation-name: star-twinkle;
+			animation-timing-function: steps(1, end);
+			animation-iteration-count: infinite;
+		}
+
+		@keyframes star-twinkle {
+			0%, 100% {
+				opacity: 1;
+			}
+
+			50% {
+				opacity: 0;
+			}
+		}
+
+		nav,
+		main {
+			position: relative;
+			z-index: 1;
+		}
+
+		.top-nav {
+			width: 100%;
+			padding: 2rem 2rem;
+			display: grid;
+			grid-template-columns: auto 1fr auto;
+			align-items: start;
+			gap: 2rem;
+			position: relative;
+		}
+
+		.top-nav::after {
+			content: "";
+			position: absolute;
+			left: 2rem;
+			right: 2rem;
+			bottom: 0;
+			border-bottom: 0.5px solid #fff;
+		}
+
+		.brand {
+			font-size: 0.95rem;
+			letter-spacing: 0.04em;
+			white-space: nowrap;
+		}
+
+		.nav-long-text {
+			justify-self: end;
+			margin-right: 3rem;
+			max-width: 70ch;
+			text-align: left;
+			font-size: .9rem;
+			line-height: 1.3;
+			font-weight: 400;
+		}
+
+		.info-link {
+			color: #fff;
+			text-decoration: none;
+			font-size: 0.95rem;
+			letter-spacing: 0.05em;
+			white-space: nowrap;
+		}
+
+		.info-link:hover,
+		.info-link:focus-visible {
+			text-decoration: underline;
+			text-underline-offset: 0.15em;
+		}
+
+		main {
+			padding: 2rem 1.5rem;
+			display: flex;
+			justify-content: center;
+			overflow: visible;
+		}
+
+		.globe-section {
+			width: min(100%, 1400px);
+			display: grid;
+			grid-template-columns: 2fr auto 2fr;
+			align-items: center;
+			padding-top: 1.5rem;
+			column-gap: 8rem;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.side-link {
+			color: #fff;
+			text-decoration: underline;
+			text-underline-offset: 0.25em;
+			font-size: 0.95rem;
+			letter-spacing: 0.04em;
+			white-space: nowrap;
+            
+		}
+
+		.side-link:hover,
+		.side-link:focus-visible {
+			text-decoration: underline;
+			text-underline-offset: 0.15em;
+		}
+
+		.globe-section .side-link:first-of-type {
+			justify-self: end;
+		}
+
+		.globe-section .side-link:last-of-type {
+			justify-self: start;
+		}
+
+		.globe {
+			position: relative;
+			width: min(64vw, 480px);
+			aspect-ratio: 1 / 1;
+			border-radius: 50%;
+			overflow: hidden;
+			border: .1px solid #fff;
+			background: #000;
+			transform-origin: center;
+		}
+
+		.globe-map {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			background: #000;
+			pointer-events: auto;
+		}
+
+
+
+		.globe-center-zone {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 30%;
+			height: 30%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			z-index: 10;
+			pointer-events: auto;
+			cursor: pointer;
+		}
+
+		.hover-cloud {
+			position: absolute;
+			inset: -50px;
+			pointer-events: none;
+			z-index: 40;
+		}
+
+		.hover-cloud img {
+			position: absolute;
+			background: #000;
+			opacity: 1;
+		}
+
+		@media (max-width: 900px) {
+			.top-nav {
+				grid-template-columns: 1fr;
+				gap: 0.85rem;
+			}
+
+			.nav-long-text {
+				justify-self: stretch;
+				margin-right: 0;
+				max-width: 100%;
+				text-align: left;
+			}
+
+			.info-link {
+				justify-self: start;
+			}
+
+			.globe {
+				width: min(76vw, 360px);
+			}
+
+			.globe-section {
+                margin-left: 2rem;
+                margin-top: 2rem;
+				grid-template-columns: 2fr;
+				justify-items: center;
+				gap: 1rem;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="star-field" id="starField" aria-hidden="true"></div>
+	<nav class="top-nav" aria-label="Top navigation">
+		<div class="brand">Digital Space-Time Colonialism Index</div>
+		<div class="nav-long-text">
+            An exploratory index that attempts to archive the intertwined histories of Arctic colonial development & racialized labor exploitation in Alaska, and the contemporary global expansion of AI infrastructures. The project makes visible how AI’s growth reactivates imperial spatial logics, collapsing past and present through data extraction, Indigenous dispossession, and the outsourcing of computational and human labor to the Global South.
+		</div>
+		<a class="info-link" href="info.html">Info</a>
+	</nav>
+	<main>
+		<section class="globe-section" aria-label="Spinning globe">
+			<div class="hover-cloud" id="hoverCloud" aria-hidden="true"></div>
+			<a class="side-link" id="spaceLink" href="#">Space</a>
+			<div class="globe">
+				<div class="globe-map" id="map" aria-label="Space-Time Colonialism Index"></div>
+				<div class="globe-center-zone" id="globeCenter"></div>
+			</div>
+			<a class="side-link" id="timeLink" href="#">Time</a>
+		</section>
+	</main>
+	<script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
+	<script>
+		// Fetch Mapbox token from server and initialize map
+		async function initializeMap() {
+			try {
+				const response = await fetch('/api/mapbox-token');
+				const data = await response.json();
+				mapboxgl.accessToken = data.token;
+
+				const map = new mapboxgl.Map({
+			container: "map",
+			style: "mapbox://styles/sfduncan/cmlydr3ki000d01rzbex5bsgc",
+			center: [0, 10],
+			zoom: 1.53,
+			projection: "globe",
+			interactive: false,
+			dragPan: false,
+			dragRotate: false,
+			scrollZoom: false,
+			doubleClickZoom: false,
+			touchZoomRotate: false,
+			keyboard: false,
+			boxZoom: false,
+			attributionControl: false
+		});
+
+		const secondsPerRevolution = 7;
+		const maxSpinZoom = 10;
+		const slowSpinZoom = 3;
+
+		let userInteracting = false;
+		let spinEnabled = true;
+
+		function createGraticule(step = 15) {
+			const features = [];
+
+			for (let lon = -180; lon <= 180; lon += step) {
+				const coordinates = [];
+				for (let lat = -85; lat <= 85; lat += 2) {
+					coordinates.push([lon, lat]);
+				}
+				features.push({
+					type: "Feature",
+					geometry: {
+						type: "LineString",
+						coordinates
+					}
+				});
+			}
+
+			for (let lat = -75; lat <= 75; lat += step) {
+				const coordinates = [];
+				for (let lon = -180; lon <= 180; lon += 2) {
+					coordinates.push([lon, lat]);
+				}
+				features.push({
+					type: "Feature",
+					geometry: {
+						type: "LineString",
+						coordinates
+					}
+				});
+			}
+
+			return {
+				type: "FeatureCollection",
+				features
+			};
+		}
+
+		function spinGlobe() {
+			const zoom = map.getZoom();
+			if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
+				let distancePerSecond = 360 / secondsPerRevolution;
+				if (zoom > slowSpinZoom) {
+					const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
+					distancePerSecond *= zoomDif;
+				}
+				const center = map.getCenter();
+				center.lng -= distancePerSecond;
+				map.easeTo({ center, duration: 1000, easing: (n) => n });
+			}
+		}
+
+		map.on("mousedown", () => {
+			userInteracting = true;
+		});
+		map.on("dragstart", () => {
+			userInteracting = true;
+		});
+		map.on("mouseup", () => {
+			userInteracting = false;
+			spinGlobe();
+		});
+		map.on("touchstart", () => {
+			userInteracting = true;
+		});
+		map.on("touchend", () => {
+			userInteracting = false;
+			spinGlobe();
+		});
+
+		map.on("moveend", () => {
+			spinGlobe();
+		});
+
+		map.on("style.load", () => {
+			map.setFog({
+				"color": "rgb(0, 0, 0)",
+				"high-color": "rgb(0, 0, 0)",
+				"space-color": "rgb(0, 0, 0)",
+				"horizon-blend": 0,
+				"star-intensity": 0
+			});
+
+			const graticuleData = createGraticule(15);
+			if (map.getSource("graticule")) {
+				map.getSource("graticule").setData(graticuleData);
+			} else {
+				map.addSource("graticule", {
+					type: "geojson",
+					data: graticuleData
+				});
+			}
+
+			if (!map.getLayer("graticule-lines")) {
+				map.addLayer({
+					id: "graticule-lines",
+					type: "line",
+					source: "graticule",
+					paint: {
+						"line-color": "rgba(255, 255, 255, 0.9)",
+						"line-width": 0.2,
+						"line-opacity": .7
+					}
+				});
+			}
+
+			if (!map.getSource("fiber")) {
+				fetch("fiber.geojson")
+					.then(response => response.json())
+					.then(data => {
+						map.addSource("fiber", {
+							type: "geojson",
+							data: data
+						});
+						map.addLayer({
+							id: "fiber-lines",
+							type: "line",
+							source: "fiber",
+							paint: {
+								"line-color": "#a00303",
+								"line-width": .2,
+								"line-opacity": 1
+							}
+						});
+					})
+					.catch(err => console.error("Failed to load fiber.geojson:", err));
+			}
+
+			spinGlobe();
+		});
+
+		const imageSets = {
+			space: [
+				"./space_imgs/alaskeros.jpg",
+				"./space_imgs/Filipinos-in-Alaska-MAIN-IMAGE.jpg",
+				"./space_imgs/images.jpg",
+				"./space_imgs/Screenshot%202026-02-15%20121906.png",
+				"./space_imgs/Screenshot 2026-02-23 102533.png",
+                "./space_imgs/Screenshot 2026-02-23 102551.png",
+                "./space_imgs/Screenshot 2026-02-23 102626.png", 
+                "./space_imgs/digital_sweatshop.jpg",
+                "./space_imgs/China_Joe.jpg",
+                "./space_imgs/latin_mining.jpg"
+			],
+			time: [
+				"./time_imgs/arctic_datacenter.jpg",
+				"./time_imgs/boarding-school.jpg",
+				"./time_imgs/data-center-4.png",
+				"./time_imgs/eyak_1.png",
+				"./time_imgs/kuva_data_center.jpg",
+				"./time_imgs/kolos-hdr-02.jpg",
+				"./time_imgs/nanoon_north.jpg",
+				"./time_imgs/relocation.jpg",
+				"./time_imgs/starlink-ground-station-ketchikan-alaska-v0-hoi832lcm2y81.jpg",
+				"./time_imgs/Tlingit-fishing-camp_7101139_2.png"
+			],
+			center: [
+				"./PowerToolsImages/anace.jpg",
+				"./PowerToolsImages/big_tech_protest.jpg",
+				"./PowerToolsImages/default.jpg",
+				"./PowerToolsImages/Fin_de_la_milicia.jpg",
+				"./PowerToolsImages/human_labor.jpg",
+				"./PowerToolsImages/men_diner.jpg",
+				"./PowerToolsImages/men_shoveling.jpg",
+				"./PowerToolsImages/philippines_minerals.jpg",
+				"./PowerToolsImages/sami_protest.jpg",
+				"./PowerToolsImages/women.jpg"
+			]
+		};
+
+		const hoverCloud = document.getElementById("hoverCloud");
+		const spaceLink = document.getElementById("spaceLink");
+		const timeLink = document.getElementById("timeLink");
+		const globeCenter = document.getElementById("globeCenter");
+		const starField = document.getElementById("starField");
+		const topNav = document.querySelector(".top-nav");
+
+		function renderStars() {
+			starField.replaceChildren();
+			const navHeight = topNav ? topNav.getBoundingClientRect().height : 0;
+			const availableHeight = Math.max(0, window.innerHeight - navHeight);
+			starField.style.top = `${navHeight}px`;
+			const count = Math.max(40, Math.floor((window.innerWidth * availableHeight) / 22000));
+
+			for (let i = 0; i < count; i += 1) {
+				const star = document.createElement("span");
+				star.className = "star";
+				star.textContent = Math.random() < 0.22 ? "o" : "*";
+				star.style.left = `${Math.random() * 100}%`;
+				star.style.top = `${Math.random() * 100}%`;
+				star.style.fontSize = `${10 + Math.floor(Math.random() * 8)}px`;
+				star.style.animationDuration = `${1.2 + Math.random() * 1.1}s`;
+				star.style.animationDelay = `${Math.random() * 0.6}s`;
+				starField.append(star);
+			}
+		}
+
+		function clearHoverCloud() {
+			hoverCloud.replaceChildren();
+		}
+
+		const imagePositions = {
+			space: [
+				{ left: 5, top: 8, width: 190 },
+				{ left: 55, top: 5, width: 210 },
+				{ left: 27, top: 25, width: 180 },
+				{ left: 50, top: 31, width: 200 },
+				{ left: 20, top: 65, width: 195 },
+				{ left: 45, top: 70, width: 185 },
+				{ left: 75, top: 68, width: 190 },
+				{ left: 72, top: 25, width: 185 },
+				{ left: 5, top: 60, width: 180 },
+				{ left: 68, top: 48, width: 195 }
+			],
+			time: [
+				{ left: 6, top: 5, width: 180 },
+				{ left: 35, top: 3, width: 190 },
+				{ left: 68, top: 8, width: 185 },
+				{ left: 12, top: 35, width: 195 },
+				{ left: 50, top: 30, width: 180 },
+				{ left: 78, top: 38, width: 190 },
+				{ left: 6, top: 65, width: 185 },
+				{ left: 38, top: 60, width: 200 },
+				{ left: 65, top: 68, width: 180 },
+				{ left: 25, top: 78, width: 175 }
+			],
+			center: [
+				{ left: 5, top: 5, width: 185 },
+				{ left: 40, top: 3, width: 195 },
+				{ left: 72, top: 8, width: 180 },
+				{ left: 18, top: 30, width: 190 },
+				{ left: 55, top: 35, width: 185 },
+				{ left: 75, top: 40, width: 195 },
+				{ left: 3, top: 68, width: 180 },
+				{ left: 35, top: 65, width: 190 },
+				{ left: 68, top: 70, width: 185 },
+				{ left: 20, top: 60, width: 180 }
+			]
+		};
+
+		function spawnHoverImages(groupKey) {
+			clearHoverCloud();
+			const images = imageSets[groupKey] || [];
+			const positions = imagePositions[groupKey] || [];
+			const containerWidth = hoverCloud.clientWidth;
+			const containerHeight = hoverCloud.clientHeight;
+
+			images.forEach((source, index) => {
+				if (index >= positions.length) return;
+				const pos = positions[index];
+				const preview = document.createElement("img");
+
+				const left = (pos.left / 100) * containerWidth;
+				const top = (pos.top / 100) * containerHeight;
+
+				preview.src = source;
+				preview.alt = "";
+				preview.style.width = `${pos.width}px`;
+				preview.style.left = `${left}px`;
+				preview.style.top = `${top}px`;
+				hoverCloud.append(preview);
+			});
+		}
+
+		function bindHover(linkEl, key) {
+			linkEl.addEventListener("click", (event) => {
+				event.preventDefault();
+			});
+			linkEl.addEventListener("mouseenter", () => spawnHoverImages(key));
+			linkEl.addEventListener("focus", () => spawnHoverImages(key));
+			linkEl.addEventListener("mouseleave", clearHoverCloud);
+			linkEl.addEventListener("blur", clearHoverCloud);
+		}
+
+		bindHover(spaceLink, "space");
+		bindHover(timeLink, "time");
+		bindHover(globeCenter, "center");
+		renderStars();
+		window.addEventListener("resize", renderStars);
+			} catch (error) {
+				console.error('Failed to initialize map:', error);
+			}
+		}
+
+		// Initialize the map when the page loads
+		initializeMap();
+	</script>
+</body>
+</html>
