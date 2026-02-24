@@ -363,6 +363,9 @@
 				"star-intensity": 0
 			});
 
+			// Debug: Log all layers to find the right one for country boundaries
+			console.log('Available layers:', map.getStyle().layers.map(l => l.id));
+
 			const graticuleData = createGraticule(15);
 			if (map.getSource("graticule")) {
 				map.getSource("graticule").setData(graticuleData);
@@ -380,10 +383,46 @@
 					source: "graticule",
 					paint: {
 						"line-color": "rgba(255, 255, 255, 0.9)",
-						"line-width": 0.2,
+						"line-width": 0.3,
 						"line-opacity": .7
 					}
-				});
+				}); // Temporarily removed beforeId to debug
+			}
+
+			if (!map.getSource("countries")) {
+				fetch("countries.geojson")
+					.then(response => {
+						console.log("Countries fetch response:", response.status);
+						return response.json();
+					})
+					.then(data => {
+						console.log("Countries data loaded, features:", data.features?.length);
+						map.addSource("countries", {
+							type: "geojson",
+							data: data
+						});
+						map.addLayer({
+							id: "country-fills",
+							type: "fill",
+							source: "countries",
+							paint: {
+								"fill-color": "#ffffff",
+								"fill-opacity": 0.7
+							}
+						});
+						map.addLayer({
+							id: "country-borders",
+							type: "line",
+							source: "countries",
+							paint: {
+								"line-color": "#fff",
+								"line-width": 0.1,
+								"line-opacity": 1
+							}
+						});
+						console.log("Country borders layer added successfully");
+					})
+					.catch(err => console.error("Failed to load countries.geojson:", err));
 			}
 
 			if (!map.getSource("fiber")) {
@@ -400,10 +439,10 @@
 							source: "fiber",
 							paint: {
 								"line-color": "#a00303",
-								"line-width": .2,
+								"line-width": .8,
 								"line-opacity": 1
 							}
-						});
+						}); // Temporarily removed beforeId to debug
 					})
 					.catch(err => console.error("Failed to load fiber.geojson:", err));
 			}
